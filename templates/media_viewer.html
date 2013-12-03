@@ -1,0 +1,41 @@
+{% load filer_tags filer_image_tags sekizai_tags %}
+
+{% if instance %}
+
+{% if instance.slide_type == 'carousel' %}
+
+<div class="carousel slide" data-ride="carousel">
+  <ol class="carousel-indicators">
+
+    {% for media in instance.medias %}
+    <li data-target="#carousel-example-generic" data-slide-to="{{ forloop.counter0 }}" {% if forloop.counter0 == 0%}  class="active"></li>
+    {% endfor %}
+
+  </ol>
+  <div class="carousel-inner">
+
+    {% for media in instance.medias %}
+    <div class="item active">
+
+      {% if media.image %}
+      <img src="{{ media.image.url }}" alt="slide {{ media.image.label }}">
+      {% endif %}
+
+      {% if media.image_url %}
+      <img src="{{ media.image_url }}" alt="slide {{ media.image_url }}">
+      {% endif %}
+    </div>
+    {% endfor %}
+
+  </div>
+  <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left"></span>
+  </a>
+  <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right"></span>
+  </a>
+</div>
+
+{% endif %}
+
+{% endif %}
