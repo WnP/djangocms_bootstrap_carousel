@@ -2,39 +2,114 @@
 
 {% if instance %}
 
-{% if instance.slide_type == 'carousel' %}
+{% if instance.slide_type == 'car' %}
 
-<div class="carousel slide" data-ride="carousel">
+<div id="carousel-{{ time }}" class="carousel slide" data-ride="carousel" style="margin: 0 auto;">
   <ol class="carousel-indicators">
 
-    {% for media in instance.medias %}
-    <li data-target="#carousel-example-generic" data-slide-to="{{ forloop.counter0 }}" {% if forloop.counter0 == 0%}  class="active" {% endif %}></li>
+    {% for media in instance.medias.all %}
+    <li
+      data-target="#carousel-{{ time }}"
+      data-slide-to="{{ forloop.counter0 }}"
+      {% if forloop.counter0 == 0 %}
+      class="active"
+      {% endif %}></li>
     {% endfor %}
 
   </ol>
   <div class="carousel-inner">
 
-    {% for media in instance.medias %}
-    <div class="item active">
+    {% for media in instance.medias.all %}
+    <div class="item {% if forloop.counter0 == 0 %}active{% endif %}">
 
       {% if media.image %}
-      <img src="{{ media.image.url }}" alt="slide {{ media.image.label }}">
+      <img src="{{ media.image.url }}" alt="slide {{ media.image.label }}" style="margin:auto;">
       {% endif %}
 
       {% if media.image_url %}
-      <img src="{{ media.image_url }}" alt="slide {{ media.image_url }}">
+      <img src="{{ media.image_url }}" alt="slide {{ media.image_url }}" style="margin:auto;">
       {% endif %}
     </div>
     {% endfor %}
 
   </div>
-  <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+  <a class="left carousel-control" href="#carousel-{{ time }}" data-slide="prev">
     <span class="glyphicon glyphicon-chevron-left"></span>
   </a>
-  <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+  <a class="right carousel-control" href="#carousel-{{ time }}" data-slide="next">
     <span class="glyphicon glyphicon-chevron-right"></span>
   </a>
 </div>
+
+{% else %}
+
+{% if instance.medias.all|length < 1 %}
+
+{% for media in instance.medias.all %}
+{% if media.image %}
+<a href="{{ media.image.url }}" rel="shadowbox">plop</a>
+{% endif %}
+{% if media.image_url %}
+<a href="{{ media.image_url }}" rel="shadowbox">plop</a>
+{% endif %}
+{% endfor %}
+
+{% else %}
+
+{% for media in instance.medias.all %}
+{% if media.image %}
+<a
+  href="{{ media.image.url }}"
+  rel="shadowbox[{{ time }}]{% if media.width %};width={{ media.width }}{% endif %}{% if media.height %};height={{ media.height }}{% endif %}"
+  {% if forloop.counter0 != 0 %}
+  class="hidden"
+  {% endif %}>
+  {% if forloop.counter0 == 0 %}
+  <img
+    src="{{ media.image.url }}"
+    {% if instance.width %}
+    width="{{ instance.width }}"
+    {% endif %}
+    {% if instance.height %}
+    height="{{ instance.height }}"
+    {% endif %}
+    />
+    {% else %}plop{% endif %}
+</a>
+{% endif %}
+{% if media.image_url %}
+<a
+  href="{{ media.image_url }}"
+  rel="shadowbox[{{ time }}]{% if media.width %};width={{ media.width }}{% endif %}{% if media.height %};height={{ media.height }}{% endif %}"
+  {% if forloop.counter0 != 0 %}
+  class="hidden"
+  {% endif %}>
+  {% if forloop.counter0 == 0 %}
+  <img
+    src="{{ media.image_url }}"
+    {% if instance.width %}
+    width="{{ instance.width }}"
+    {% endif %}
+    {% if instance.height %}
+    height="{{ instance.height }}"
+    {% endif %}
+    />
+    {% else %}plop{% endif %}
+</a>
+{% endif %}
+{% endfor %}
+
+{% endif %}
+
+{% addtoblock "css" %}<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}shadowbox-3.0.3/shadowbox.css"></script>{% endaddtoblock %}
+{% addtoblock "js" %}<script type="text/javascript" src="{{ STATIC_URL }}shadowbox-3.0.3/shadowbox.js"></script>{% endaddtoblock %}
+{% addtoblock "js" %}
+<script type="text/javascript">
+$(function() {
+  Shadowbox.init();
+});
+</script>
+{% endaddtoblock %}
 
 {% endif %}
 

@@ -25,6 +25,8 @@ class MediaItem(models.Model):
         help_text='vimeo or youtube video url. \
         Example: http://www.youtube.com/watch?v=YFa59lK-kpo',
         blank=True, null=True)
+    width = models.IntegerField('Width', blank=True, null=True)
+    height = models.IntegerField('Height', blank=True, null=True)
 
     def clean(self):
         from django.core.exceptions import ValidationError
@@ -35,7 +37,7 @@ class MediaItem(models.Model):
             raise ValidationError(
                 'you must choose only an image or a video or a video_url')
 
-        if not (self.image or self.video_url or self.video):
+        if not (self.image or self.video_url or self.video or self.image_url):
             raise ValidationError(
                 'You must provide at least one media')
 
@@ -48,11 +50,13 @@ class MediaItem(models.Model):
 
     def __unicode__(self):
         if self.image:
-            return u'Media Item: image > %s' % self.image
+            return u'image > %s' % self.image
+        if self.image_url:
+            return u'image > %s' % self.image_url
         elif self.video_url:
-            return u'Media Item: video > %s' % self.video_url
+            return u'video > %s' % self.video_url
         elif self.video:
-            return u'Media Item: video > %s' % self.video
+            return u'video > %s' % self.video
         else:
             return u'Media Item: Empty!'
 
@@ -60,18 +64,18 @@ class MediaItem(models.Model):
 class MediaViewer(CMSPlugin):
 
     SLIDE_TYPE = (
-        ('carousel', 'carousel'),
-        ('shadowbox', 'shadowbox'),
+        ('car', 'carousel'),
+        ('sbox', 'shadowbox'),
     )
 
     title = models.CharField('Title', max_length=255, blank=True, null=True)
     slide_type = models.CharField(
-        max_length=5, choices=SLIDE_TYPE, default='carousel')
+        max_length=5, choices=SLIDE_TYPE, default='car')
     medias = models.ManyToManyField(MediaItem)
+    width = models.IntegerField('Thumbnail Width', blank=True, null=True)
+    height = models.IntegerField('Thumbnail Height', blank=True, null=True)
 
     def clean(self):
-        #import pudb
-        #pudb.set_trace()
         #from django.core.exceptions import ValidationError
         #if not self.medias:
         #    raise ValidationError(

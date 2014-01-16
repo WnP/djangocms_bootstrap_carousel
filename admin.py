@@ -8,6 +8,10 @@ class MediaItemAdmin(admin.ModelAdmin):
         (None, {
             'fields': ('image', 'video', 'image_url', 'video_url'),
         }),
+        ('More', {
+            'classes': ('collapse',),
+            'fields': ('width', 'height'),
+        }),
     )
 
 admin.site.register(MediaItem, MediaItemAdmin)
